@@ -1,0 +1,11 @@
+version: '3'
+services:
+  database:
+    image: postgres:11
+    container_name: mechanical-bd
+    ports:
+      - 7778:5432
+    environment:
+      POSTGRES_DB: mechanical
+      POSTGRES_USER: mechanical
+      POSTGRES_PASSWORD: mechanical123
