@@ -10,15 +10,15 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import java.io.Serializable;
 
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @MappedSuperclass
 public class AbstractEntity implements Serializable {
 
     @Id
     @GeneratedValue
-    private Long id;
+    protected Long id;
 
 }

@@ -29,6 +29,9 @@ public class ServiceOrder extends AbstractEntity {
     @ManyToOne
     private Client client;
 
+    @ManyToOne
+    private Employee employee;
+
 
     public enum STATUS {
 
