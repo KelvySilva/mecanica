@@ -18,23 +18,10 @@ import java.util.List;
 @Entity
 public class Client extends Person {
 
-    @Enumerated(EnumType.STRING)
-    private TYPE type;
-
 
     @JsonBackReference
     @OneToMany(mappedBy = "client", fetch = FetchType.LAZY)
     private List<Vehicle> vehicles;
 
-    public enum TYPE {
 
-        PF("PESSOA_FÍSICA"),
-        PJ("PESSOA_JURÍDICA");
-
-        private String desc;
-
-        TYPE(String desc) {
-            this.desc = desc;
-        }
-    }
 }

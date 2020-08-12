@@ -1,10 +1,17 @@
 package br.com.sg.mechanical.domain;
 
-import lombok.*;
+import br.com.sg.mechanical.constants.ValidationMessages;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -14,30 +21,32 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = "cpf"))
 public class Person extends AbstractEntity {
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
+    @NotEmpty(message = ValidationMessages.NOT_EMPTY_MESSAGE)
     private String name;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
+    @NotEmpty(message = ValidationMessages.NOT_EMPTY_MESSAGE)
     private String address;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
+    @NotEmpty(message = ValidationMessages.NOT_EMPTY_MESSAGE)
     private String addressNumber;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
+    @NotEmpty(message = ValidationMessages.NOT_EMPTY_MESSAGE)
     private String city;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
+    @NotEmpty(message = ValidationMessages.NOT_EMPTY_MESSAGE)
     private String state;
 
-    @NotNull
-    @NotEmpty
+    @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
+    @NotEmpty(message = ValidationMessages.NOT_EMPTY_MESSAGE)
+    @Column(unique = true)
     private String cpf;
 
     @CreationTimestamp

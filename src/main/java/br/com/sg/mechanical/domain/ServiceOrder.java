@@ -1,20 +1,24 @@
 package br.com.sg.mechanical.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import br.com.sg.mechanical.constants.ValidationMessages;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Data
+@Getter
+@Setter
 @Entity
 public class ServiceOrder extends AbstractEntity {
 
+    @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
+    @NotEmpty(message = ValidationMessages.NOT_EMPTY_MESSAGE)
     private StringBuilder description;
 
     @CreationTimestamp
@@ -31,7 +35,6 @@ public class ServiceOrder extends AbstractEntity {
 
     @ManyToOne
     private Employee employee;
-
 
     public enum STATUS {
 

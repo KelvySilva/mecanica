@@ -1,9 +1,9 @@
 package br.com.sg.mechanical.resource;
 
 import br.com.sg.mechanical.domain.Vehicle;
-import br.com.sg.mechanical.error.ErrorDetails;
+import br.com.sg.mechanical.factory.ErrorFactory;
 import br.com.sg.mechanical.service.VehicleService;
-import br.com.sg.mechanical.utils.FieldErrorMessageFormater;
+import br.com.sg.mechanical.utils.FieldErrorMessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +11,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.Instant;
-import java.util.Date;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("v1")
@@ -30,43 +28,28 @@ public class VehicleAPI {
     @GetMapping(path = "/protected/vehicles")
     public ResponseEntity listAll() {
         List<Vehicle> vehicles = this.service.listAll();
-        if (vehicles.isEmpty()) return ResponseEntity.notFound().build();
+        if (vehicles.isEmpty()) return ResponseEntity.ok(ErrorFactory.createResourceListIsEmptyMessage());
         else return ResponseEntity.ok(vehicles);
     }
+    @GetMapping(path = "/protected/vehicle/{id}")
+    public ResponseEntity findOne(@PathVariable Long id) {
+        Optional<Vehicle> one = this.service.findOne(id);
+        if (one.isPresent()) return ResponseEntity.ok(one);
+        else return ResponseEntity.ok(ErrorFactory.createResourceEntityNotPresentMessage(id));
+    }
+
 
     @PostMapping(path = "/admin/vehicle")
     public ResponseEntity saveOne(@RequestBody @Valid Vehicle vehicle, Errors errors) {
-
         if (errors.getFieldErrorCount() > 0) {
-            String errorMessage = FieldErrorMessageFormater.format(errors);
-            return ResponseEntity.ok(
-                    ErrorDetails.Builder.anErrorDetails()
-                            .title("Erro de validação")
-                            .status(404)
-                            .timestamp(Date.from(Instant.now()).getTime())
-                            .detail(String.format(errorMessage))
-                            .developerMessage("DEVELOPMENT")
-                            .build()
-            );
+            return ResponseEntity.ok(ErrorFactory.createFieldErrorMessage(errors));
         }
-
         try {
             Vehicle vehicleStored = this.service.saveOne(vehicle);
-            if (Objects.nonNull(vehicle) && vehicleStored instanceof  Vehicle) {
-                return ResponseEntity.ok(vehicleStored);
-            } else {
-                return ResponseEntity.ok("Error");
-            }
+            return ResponseEntity.ok(vehicleStored);
         }catch (DataIntegrityViolationException ex) {
-            return ResponseEntity.ok(
-                    ErrorDetails.Builder.anErrorDetails()
-                            .title("Erro de validação")
-                            .status(404)
-                            .timestamp(Date.from(Instant.now()).getTime())
-                            .detail("lisencePlate deve ser unico.")
-                            .developerMessage("DEVELOPMENT")
-                            .build()
-            );
+            String constraintField = FieldErrorMessageFormatter.getConstraintField(ex);
+            return ResponseEntity.ok(ErrorFactory.createDataIntegrityErrorMessage(constraintField));
         }
 
     }

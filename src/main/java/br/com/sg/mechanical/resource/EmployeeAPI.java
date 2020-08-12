@@ -1,17 +1,17 @@
 package br.com.sg.mechanical.resource;
 
 import br.com.sg.mechanical.domain.Employee;
-import br.com.sg.mechanical.error.ErrorDetails;
+import br.com.sg.mechanical.factory.ErrorFactory;
 import br.com.sg.mechanical.service.EmployeeService;
+import br.com.sg.mechanical.utils.FieldErrorMessageFormatter;
+import br.com.sg.mechanical.utils.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.*;
 
-import java.time.Instant;
-import java.util.Date;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,13 +30,7 @@ public class EmployeeAPI {
     public ResponseEntity listAll() {
         List<Employee> all = this.service.findAll();
         if (all.isEmpty()) return ResponseEntity.ok(
-                ErrorDetails.Builder.anErrorDetails()
-                        .title("Nenhum funcionário encontrado!")
-                        .status(404)
-                        .timestamp(Date.from(Instant.now()).getTime())
-                        .detail(String.format("Nenhum recurso encontrado"))
-                        .developerMessage("")
-                        .build()
+                ErrorFactory.createResourceListIsEmptyMessage()
         );
         else return ResponseEntity.ok(all);
     }
@@ -45,14 +39,36 @@ public class EmployeeAPI {
     public ResponseEntity findOne(@PathVariable Long id) {
         Optional<Employee> one = this.service.findOne(id);
         if (one.isPresent()) return ResponseEntity.ok(one.get());
-        else return ResponseEntity.ok(
-                ErrorDetails.Builder.anErrorDetails()
-                        .title("Funcionário não contrado!")
-                        .status(404)
-                        .timestamp(Date.from(Instant.now()).getTime())
-                        .detail(String.format("Funcionario não encontrado para o ID: %s",id))
-                        .developerMessage("DEVELOPMENT")
-                        .build()
-        );
+        else return ResponseEntity.ok(ErrorFactory.createResourceEntityNotPresentMessage(id));
+    }
+
+    @PostMapping(path = "/admin/employee")
+    public ResponseEntity saveOne(@RequestBody @Valid Employee employee, Errors errors) {
+
+        if (errors.getFieldErrorCount() > 0) {
+            return ResponseEntity.ok(ErrorFactory.createFieldErrorMessage(errors));
+        }
+
+        employee.setPassword(PasswordEncoder.encode(employee.getPassword()));
+        try {
+            Employee employeeStored = this.service.saveOne(employee);
+            return ResponseEntity.ok(employeeStored);
+        }catch (DataIntegrityViolationException ex) {
+            return ResponseEntity.ok(ErrorFactory.createDataIntegrityErrorMessage(FieldErrorMessageFormatter.getConstraintField(ex)));
+        }
+    }
+
+    @PutMapping(path = "/admin/employee/{id}")
+    public ResponseEntity updateOne(@PathVariable Long id, @RequestBody @Valid Employee employee, Errors errors) {
+        if (id != employee.getId()) {
+            return ResponseEntity.ok(ErrorFactory.createRequestConflictErrorMessage());
+        }
+        if (errors.getFieldErrorCount() > 0) {
+            return ResponseEntity.ok(ErrorFactory.createFieldErrorMessage(errors));
+        }
+        if (!this.service.exists(id)) {
+            return ResponseEntity.ok(ErrorFactory.createResourceEntityNotPresentMessage(id));
+        }
+        return ResponseEntity.ok(this.service.updateOne(id, employee));
     }
 }

@@ -55,4 +55,7 @@ public class ClientService {
                 this.repository.saveAndFlush(client) :
                 client;
     }
+    public Boolean exists(Long id) {
+        return this.repository.existsById(id);
+    }
 }

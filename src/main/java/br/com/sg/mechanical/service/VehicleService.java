@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class VehicleService {
@@ -26,4 +27,12 @@ public class VehicleService {
     public Vehicle saveOne(Vehicle vehicle) {
         return this.repository.save(vehicle);
     }
+
+    public Optional<Vehicle> findOne(Long id) {
+        return this.repository.findById(id);
+    }
+    public Boolean exists(Long id) {
+        return this.repository.existsById(id);
+    }
+
 }
