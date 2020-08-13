@@ -1,11 +1,13 @@
 package br.com.sg.mechanical.handler;
 
-import br.com.sg.mechanical.domain.Employee;
 import br.com.sg.mechanical.error.ErrorDetails;
 import br.com.sg.mechanical.error.ResourceNotFoundDetails;
 import br.com.sg.mechanical.error.ResourceNotFoundException;
 import br.com.sg.mechanical.error.ValidationErrorDetails;
+import br.com.sg.mechanical.utils.ErrorUtils;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import lombok.SneakyThrows;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +21,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -76,27 +77,14 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
         if (exception instanceof HttpMessageNotReadableException) {
 
-            if (exception.getCause() instanceof InvalidFormatException) {
-                String pathReference = ((InvalidFormatException) exception.getCause()).getPathReference();
-                String s = pathReference.substring(pathReference.indexOf("[")+1, pathReference.indexOf("]"));
-                ErrorDetails details = ErrorDetails.Builder.anErrorDetails()
-                        .timestamp(new Date().getTime())
-                        .status(status.value())
-                        .title("Não é possível realizar a ação.")
-                        .detail("O campo "+s+" deve possuir um dos seguintes valores: "+ Arrays.toString(Employee.TYPE.values()))
-                        .developerMessage(exception.getClass().getName())
-                        .build();
-                return new ResponseEntity<>(details, headers, status);
-            }else {
-                ErrorDetails details = ErrorDetails.Builder.anErrorDetails()
-                        .timestamp(new Date().getTime())
-                        .status(status.value())
-                        .title("Não é possível realizar a ação.")
-                        .detail(exception.getMessage())
-                        .developerMessage(exception.getClass().getName())
-                        .build();
-                return new ResponseEntity<>(details, headers, status);
-            }
+            ErrorDetails details = ErrorDetails.Builder.anErrorDetails()
+                    .timestamp(new Date().getTime())
+                    .status(status.value())
+                    .title("Não é possível realizar a ação.")
+                    .detail(exception.getMessage())
+                    .developerMessage(exception.getClass().getName())
+                    .build();
+            return new ResponseEntity<>(details, headers, status);
 
 
         }else if (exception instanceof MethodArgumentTypeMismatchException) {
@@ -132,5 +120,26 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     }
 
+    @SneakyThrows
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+
+        try {
+            throw ex.getRootCause();
+        }catch (JsonParseException jpe) {
+            return super.handleHttpMessageNotReadable(ex, headers, status, request);
+        }catch (NullPointerException npe) {
+            ResourceNotFoundDetails details = ResourceNotFoundDetails.Builder.newBuilder()
+                    .timestamp(new Date().getTime())
+                    .status(HttpStatus.NOT_FOUND.value())
+                    .title("Resource not found")
+                    .detail(ex.getMessage())
+                    .developerMessage(ex.getClass().getName())
+                    .build();
+            return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
+        }catch (InvalidFormatException ife) {
+            return ResponseEntity.ok(ErrorUtils.createInvalidFormatErrorMessage(ife.getValue().toString(),ife.getPath().get(0).getFieldName(),Arrays.toString(ife.getTargetType().getEnumConstants()) ));
+        }
+    }
 }
 

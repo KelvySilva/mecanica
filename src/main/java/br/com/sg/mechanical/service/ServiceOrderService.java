@@ -2,12 +2,17 @@ package br.com.sg.mechanical.service;
 
 import br.com.sg.mechanical.domain.ServiceOrder;
 import br.com.sg.mechanical.repository.ServiceOrderRepository;
+import br.com.sg.mechanical.utils.WorkingTimeTranslatorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+
+import static br.com.sg.mechanical.domain.ServiceOrder.STATUS.*;
 
 @Service
 public class ServiceOrderService {
@@ -29,18 +34,33 @@ public class ServiceOrderService {
 
     @Transactional
     public ServiceOrder saveOne(ServiceOrder serviceOrder) {
+        serviceOrder.setUpTime(WorkingTimeTranslatorUtils.translateToTime(serviceOrder.getCreatedAt()));
         return this.repository.save(serviceOrder);
     }
 
     @Transactional
     public ServiceOrder updateOne(Long id, ServiceOrder serviceOrder) {
         ServiceOrder updatable = this.repository.findById(id).get();
+        if (Objects.isNull(updatable.getIdleTime())) {
+            updatable.setIdleTime(Duration.ZERO);
+        }
+        if (!(updatable.getStatus().equals(CANCELED) || updatable.getStatus().equals(FINISHED))) {
+            updatable.setUpTime(WorkingTimeTranslatorUtils.translateToTime(updatable.getCreatedAt()));
+        }
 
-        if (!updatable.getClient().equals(serviceOrder.getClient())) {
-            updatable.setClient(serviceOrder.getClient());
+        /*Não foi alterado o estado*/
+        if ((updatable.getStatus().equals(serviceOrder.getStatus())) &&
+                /*e o estado atual não corresponde a um estado de uptime*/
+           !(updatable.getStatus().equals(IN_ANALYSIS) || updatable.getStatus().equals(IN_PROGRESS)))
+        {
+            Duration durationToUpdate = WorkingTimeTranslatorUtils.sum(updatable.getDurationIdleTime(), WorkingTimeTranslatorUtils.translateToTime(updatable.getUpdateAt()));
+            updatable.setIdleTime(durationToUpdate);
         }
         if (!updatable.getDescription().equals(serviceOrder.getDescription())) {
             updatable.setDescription(serviceOrder.getDescription());
+        }
+        if (!updatable.getAnalysisResult().equals(serviceOrder.getAnalysisResult())) {
+            updatable.setAnalysisResult(serviceOrder.getAnalysisResult());
         }
         if (!updatable.getEmployee().equals(serviceOrder.getEmployee())) {
             updatable.setEmployee(serviceOrder.getEmployee());

@@ -1,6 +1,7 @@
 package br.com.sg.mechanical.domain;
 
 import br.com.sg.mechanical.constants.ValidationMessages;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -50,9 +51,11 @@ public class Person extends AbstractEntity {
     private String cpf;
 
     @CreationTimestamp
+    @JsonIgnore
     private LocalDateTime cratedAtDate;
 
     @UpdateTimestamp
+    @JsonIgnore
     private LocalDateTime lastUpdate;
 
 

@@ -1,7 +1,7 @@
 package br.com.sg.mechanical.resource;
 
 import br.com.sg.mechanical.domain.Vehicle;
-import br.com.sg.mechanical.factory.ErrorFactory;
+import br.com.sg.mechanical.utils.ErrorUtils;
 import br.com.sg.mechanical.service.VehicleService;
 import br.com.sg.mechanical.utils.FieldErrorMessageFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,28 +28,28 @@ public class VehicleAPI {
     @GetMapping(path = "/protected/vehicles")
     public ResponseEntity listAll() {
         List<Vehicle> vehicles = this.service.listAll();
-        if (vehicles.isEmpty()) return ResponseEntity.ok(ErrorFactory.createResourceListIsEmptyMessage());
+        if (vehicles.isEmpty()) return ResponseEntity.ok(ErrorUtils.createResourceListIsEmptyMessage());
         else return ResponseEntity.ok(vehicles);
     }
     @GetMapping(path = "/protected/vehicle/{id}")
     public ResponseEntity findOne(@PathVariable Long id) {
         Optional<Vehicle> one = this.service.findOne(id);
         if (one.isPresent()) return ResponseEntity.ok(one);
-        else return ResponseEntity.ok(ErrorFactory.createResourceEntityNotPresentMessage(id));
+        else return ResponseEntity.ok(ErrorUtils.createResourceEntityNotPresentMessage(id));
     }
 
 
     @PostMapping(path = "/admin/vehicle")
     public ResponseEntity saveOne(@RequestBody @Valid Vehicle vehicle, Errors errors) {
         if (errors.getFieldErrorCount() > 0) {
-            return ResponseEntity.ok(ErrorFactory.createFieldErrorMessage(errors));
+            return ResponseEntity.ok(ErrorUtils.createFieldErrorMessage(errors));
         }
         try {
             Vehicle vehicleStored = this.service.saveOne(vehicle);
             return ResponseEntity.ok(vehicleStored);
         }catch (DataIntegrityViolationException ex) {
             String constraintField = FieldErrorMessageFormatter.getConstraintField(ex);
-            return ResponseEntity.ok(ErrorFactory.createDataIntegrityErrorMessage(constraintField));
+            return ResponseEntity.ok(ErrorUtils.createDataIntegrityErrorMessage(constraintField));
         }
 
     }

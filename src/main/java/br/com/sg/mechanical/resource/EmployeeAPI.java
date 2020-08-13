@@ -1,7 +1,7 @@
 package br.com.sg.mechanical.resource;
 
 import br.com.sg.mechanical.domain.Employee;
-import br.com.sg.mechanical.factory.ErrorFactory;
+import br.com.sg.mechanical.utils.ErrorUtils;
 import br.com.sg.mechanical.service.EmployeeService;
 import br.com.sg.mechanical.utils.FieldErrorMessageFormatter;
 import br.com.sg.mechanical.utils.PasswordEncoder;
@@ -30,7 +30,7 @@ public class EmployeeAPI {
     public ResponseEntity listAll() {
         List<Employee> all = this.service.findAll();
         if (all.isEmpty()) return ResponseEntity.ok(
-                ErrorFactory.createResourceListIsEmptyMessage()
+                ErrorUtils.createResourceListIsEmptyMessage()
         );
         else return ResponseEntity.ok(all);
     }
@@ -39,14 +39,14 @@ public class EmployeeAPI {
     public ResponseEntity findOne(@PathVariable Long id) {
         Optional<Employee> one = this.service.findOne(id);
         if (one.isPresent()) return ResponseEntity.ok(one.get());
-        else return ResponseEntity.ok(ErrorFactory.createResourceEntityNotPresentMessage(id));
+        else return ResponseEntity.ok(ErrorUtils.createResourceEntityNotPresentMessage(id));
     }
 
     @PostMapping(path = "/admin/employee")
     public ResponseEntity saveOne(@RequestBody @Valid Employee employee, Errors errors) {
 
         if (errors.getFieldErrorCount() > 0) {
-            return ResponseEntity.ok(ErrorFactory.createFieldErrorMessage(errors));
+            return ResponseEntity.ok(ErrorUtils.createFieldErrorMessage(errors));
         }
 
         employee.setPassword(PasswordEncoder.encode(employee.getPassword()));
@@ -54,20 +54,20 @@ public class EmployeeAPI {
             Employee employeeStored = this.service.saveOne(employee);
             return ResponseEntity.ok(employeeStored);
         }catch (DataIntegrityViolationException ex) {
-            return ResponseEntity.ok(ErrorFactory.createDataIntegrityErrorMessage(FieldErrorMessageFormatter.getConstraintField(ex)));
+            return ResponseEntity.ok(ErrorUtils.createDataIntegrityErrorMessage(FieldErrorMessageFormatter.getConstraintField(ex)));
         }
     }
 
     @PutMapping(path = "/admin/employee/{id}")
     public ResponseEntity updateOne(@PathVariable Long id, @RequestBody @Valid Employee employee, Errors errors) {
         if (id != employee.getId()) {
-            return ResponseEntity.ok(ErrorFactory.createRequestConflictErrorMessage());
+            return ResponseEntity.ok(ErrorUtils.createRequestConflictErrorMessage());
         }
         if (errors.getFieldErrorCount() > 0) {
-            return ResponseEntity.ok(ErrorFactory.createFieldErrorMessage(errors));
+            return ResponseEntity.ok(ErrorUtils.createFieldErrorMessage(errors));
         }
         if (!this.service.exists(id)) {
-            return ResponseEntity.ok(ErrorFactory.createResourceEntityNotPresentMessage(id));
+            return ResponseEntity.ok(ErrorUtils.createResourceEntityNotPresentMessage(id));
         }
         return ResponseEntity.ok(this.service.updateOne(id, employee));
     }

@@ -1,4 +1,4 @@
-package br.com.sg.mechanical.factory;
+package br.com.sg.mechanical.utils;
 
 import br.com.sg.mechanical.error.ErrorDetails;
 import br.com.sg.mechanical.utils.FieldErrorMessageFormatter;
@@ -8,7 +8,7 @@ import org.springframework.validation.Errors;
 import java.time.Instant;
 import java.util.Date;
 
-public class ErrorFactory {
+public class ErrorUtils {
 
     public static ErrorDetails createFieldErrorMessage(Errors errors) {
         String errorMessage = FieldErrorMessageFormatter.format(errors);
@@ -67,6 +67,15 @@ public class ErrorFactory {
                 .status(HttpStatus.NOT_FOUND.value())
                 .timestamp(Date.from(Instant.now()).getTime())
                 .detail(String.format("O corpo da requisição precisa ser informado."))
+                .developerMessage("DEVELOPMENT")
+                .build();
+    }
+    public static ErrorDetails createInvalidFormatErrorMessage(String value, String attr, String fields) {
+        return ErrorDetails.Builder.anErrorDetails()
+                .title("Não foi possível realizar a ação.")
+                .status(HttpStatus.CONFLICT.value())
+                .timestamp(Date.from(Instant.now()).getTime())
+                .detail(String.format("O valor [%s] não é aceito para o atributo [%s]. Os valores válidos são: %s", value,attr, fields))
                 .developerMessage("DEVELOPMENT")
                 .build();
     }
