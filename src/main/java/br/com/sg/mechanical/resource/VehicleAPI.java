@@ -58,6 +58,7 @@ public class VehicleAPI {
             @ApiResponse(code = 400, message = "Quando algumas das informações necessárias for vazia ou nula."),
             @ApiResponse(code = 200,message = "Veículo criado.")
     })
+
     @PostMapping(path = "/admin/vehicle")
     public ResponseEntity saveOne(@RequestBody @Valid Vehicle vehicle,@ApiIgnore Errors errors) {
         if (errors.getFieldErrorCount() > 0) return ResponseEntity.ok(MessageUtils.createFieldErrorMessage(errors));

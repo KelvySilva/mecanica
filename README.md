@@ -20,4 +20,8 @@ isso criara um container no docker rodando um postgres pré-configurado para con
 Começe cadastrando *funcionários* antes de tudo, e depois cadastre *cliente* antes de cadastrar um *veículo*, e assim
 poderá dar sequencia com o cadastro das *ordens de serviço* e por fim *orçamentos*   
 
+### Documentação da API
+A documentaçãp irá rodar em **http://localhost:8082/swagger-ui.html**
+
+PS: Fico feliz em receber feedbacks :)
 

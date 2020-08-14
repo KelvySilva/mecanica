@@ -2,8 +2,7 @@ package br.com.sg.mechanical.domain;
 
 import br.com.sg.mechanical.constants.ValidationMessages;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -85,7 +84,7 @@ public class ServiceOrder extends AbstractEntity {
     private Vehicle vehicle;
 
     @ManyToOne
-    @ApiModelProperty("Funcionário responsável pelo trabalho.")
+    @ApiModelProperty(value = "Funcionário responsável pelo trabalho.")
     private Employee employee;
 
     @ApiModel

@@ -1,6 +1,8 @@
 package br.com.sg.mechanical.resource;
 
+import br.com.sg.mechanical.domain.Client;
 import br.com.sg.mechanical.domain.ServiceOrder;
+import br.com.sg.mechanical.domain.Vehicle;
 import br.com.sg.mechanical.error.MessageDetails;
 import br.com.sg.mechanical.utils.MessageUtils;
 import br.com.sg.mechanical.service.ServiceOrderService;
@@ -60,6 +62,7 @@ public class ServiceOrderAPI {
             @ApiResponse(code = 400, message = "Quando algumas das informações necessárias for vazia ou nula."),
             @ApiResponse(code = 200,message = "OS criada.")
     })
+
     @PostMapping(path = "/admin/os")
     public ResponseEntity saveOne(@RequestBody @Valid ServiceOrder serviceOrder,@ApiIgnore Errors errors) {
         if (errors.getFieldErrorCount() > 0) return ResponseEntity.ok(MessageUtils.createFieldErrorMessage(errors));
