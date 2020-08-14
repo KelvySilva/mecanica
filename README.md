@@ -2,7 +2,7 @@
 
 ### Projeto de exemplo para API de sistema de gerenciamento de mecânica.
 
-### **Rodando a API***
+### **Rodando a API**
 
 1. Faça o clone do projeto:
 `git clone https://github.com/KelvySilva/mecanica`
