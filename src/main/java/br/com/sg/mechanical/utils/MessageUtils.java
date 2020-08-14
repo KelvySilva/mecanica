@@ -1,38 +1,38 @@
 package br.com.sg.mechanical.utils;
 
-import br.com.sg.mechanical.error.ErrorDetails;
-import br.com.sg.mechanical.utils.FieldErrorMessageFormatter;
+import br.com.sg.mechanical.error.MessageDetails;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 
 import java.time.Instant;
 import java.util.Date;
 
-public class ErrorUtils {
+public class MessageUtils {
 
-    public static ErrorDetails createFieldErrorMessage(Errors errors) {
+    public static MessageDetails createFieldErrorMessage(Errors errors) {
         String errorMessage = FieldErrorMessageFormatter.format(errors);
-        return ErrorDetails.Builder.anErrorDetails()
+        return MessageDetails.Builder.aMessageDetails()
                 .title("Erro de validação")
-                .status(HttpStatus.NOT_FOUND.value())
+                .status(HttpStatus.BAD_REQUEST.value())
                 .timestamp(Date.from(Instant.now()).getTime())
                 .detail(String.format(errorMessage))
                 .developerMessage("DEVELOPMENT")
                 .build();
     }
 
-    public static ErrorDetails createDataIntegrityErrorMessage(String field) {
-        return ErrorDetails.Builder.anErrorDetails()
+    public static MessageDetails createDataIntegrityErrorMessage(DataIntegrityViolationException ex) {
+        return MessageDetails.Builder.aMessageDetails()
                 .title("Erro de integridade")
                 .status(HttpStatus.BAD_REQUEST.value())
                 .timestamp(Date.from(Instant.now()).getTime())
-                .detail(String.format("%s já existe!.", field))
+                .detail(String.format("%s já existe!.", FieldErrorMessageFormatter.getConstraintField(ex)))
                 .developerMessage("DEVELOPMENT")
                 .build();
     }
 
-    public static ErrorDetails createResourceListIsEmptyMessage() {
-        return ErrorDetails.Builder.anErrorDetails()
+    public static MessageDetails createResourceListIsEmptyMessage() {
+        return MessageDetails.Builder.aMessageDetails()
                 .title("Não encontrado!")
                 .status(HttpStatus.NOT_FOUND.value())
                 .timestamp(Date.from(Instant.now()).getTime())
@@ -41,8 +41,8 @@ public class ErrorUtils {
                 .build();
     }
 
-    public static ErrorDetails createResourceEntityNotPresentMessage(Long id) {
-        return ErrorDetails.Builder.anErrorDetails()
+    public static MessageDetails createResourceEntityNotPresentMessage(Long id) {
+        return MessageDetails.Builder.aMessageDetails()
                 .title("Não encontrado!")
                 .status(HttpStatus.NOT_FOUND.value())
                 .timestamp(Date.from(Instant.now()).getTime())
@@ -51,18 +51,18 @@ public class ErrorUtils {
                 .build();
     }
 
-    public static ErrorDetails createRequestConflictErrorMessage() {
-        return ErrorDetails.Builder.anErrorDetails()
+    public static MessageDetails createRequestConflictErrorMessage() {
+        return MessageDetails.Builder.aMessageDetails()
                 .title("Divergencia de dados")
-                .status(HttpStatus.CONFLICT.value())
+                .status(HttpStatus.BAD_REQUEST.value())
                 .timestamp(Date.from(Instant.now()).getTime())
                 .detail(String.format("O ID na URL da requisição é diferente do informado no corpo da requisição."))
                 .developerMessage("DEVELOPMENT")
                 .build();
     }
 
-    public static ErrorDetails createRequestBodyIsMissingMessage() {
-        return ErrorDetails.Builder.anErrorDetails()
+    public static MessageDetails createRequestBodyIsMissingMessage() {
+        return MessageDetails.Builder.aMessageDetails()
                 .title("Não foi possível realizar a ação.")
                 .status(HttpStatus.NOT_FOUND.value())
                 .timestamp(Date.from(Instant.now()).getTime())
@@ -70,12 +70,22 @@ public class ErrorUtils {
                 .developerMessage("DEVELOPMENT")
                 .build();
     }
-    public static ErrorDetails createInvalidFormatErrorMessage(String value, String attr, String fields) {
-        return ErrorDetails.Builder.anErrorDetails()
+    public static MessageDetails createInvalidFormatErrorMessage(String value, String attr, String fields) {
+        return MessageDetails.Builder.aMessageDetails()
                 .title("Não foi possível realizar a ação.")
                 .status(HttpStatus.CONFLICT.value())
                 .timestamp(Date.from(Instant.now()).getTime())
                 .detail(String.format("O valor [%s] não é aceito para o atributo [%s]. Os valores válidos são: %s", value,attr, fields))
+                .developerMessage("DEVELOPMENT")
+                .build();
+    }
+
+    public static MessageDetails createDeleteSuccessMessage(String entity) {
+        return MessageDetails.Builder.aMessageDetails()
+                .title("Não foi possível realizar a ação.")
+                .status(HttpStatus.OK.value())
+                .timestamp(Date.from(Instant.now()).getTime())
+                .detail(String.format("%s deletado com sucesso!", entity))
                 .developerMessage("DEVELOPMENT")
                 .build();
     }

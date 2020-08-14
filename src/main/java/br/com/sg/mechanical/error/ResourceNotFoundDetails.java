@@ -1,6 +1,6 @@
 package br.com.sg.mechanical.error;
 
-public class ResourceNotFoundDetails extends ErrorDetails {
+public class ResourceNotFoundDetails extends MessageDetails {
 
     public ResourceNotFoundDetails() {
     }

@@ -1,6 +1,9 @@
 package br.com.sg.mechanical.domain;
 
 import br.com.sg.mechanical.constants.ValidationMessages;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,6 +12,7 @@ import org.apache.commons.lang.time.DurationFormatUtils;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.boot.convert.DurationUnit;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -19,6 +23,7 @@ import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+@ApiModel(value = "Objeto Ordem de Serviço")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -30,43 +35,60 @@ public class ServiceOrder extends AbstractEntity {
         return DurationFormatUtils.formatDuration(upTime.toMillis(), "MM:dd:HH:mm:ss");
     }
 
+    @ApiModelProperty(hidden = true)
+    @ApiIgnore
+    @JsonIgnore
     public Duration getDurationIdleTime() {
         return idleTime;
     }
+
     public String getIdleTime() {
         return DurationFormatUtils.formatDuration(idleTime.toMillis(), "MM:dd:HH:mm:ss");
     }
+
+    @ApiModelProperty(hidden = true)
+    @ApiIgnore
+    @JsonIgnore
     public Duration getDurationUpTime() {
         return upTime;
     }
 
-
+    @ApiModelProperty("Descrição do problema pelo cliente.")
     @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
     @NotEmpty(message = ValidationMessages.NOT_EMPTY_MESSAGE)
-    private StringBuilder description;
+    private String description;
 
+    @ApiModelProperty("Descrição do problema pelo mecânico após a análise.")
     @NotNull(message = ValidationMessages.NOT_NULL_MESSAGE)
-    private StringBuilder analysisResult;
+    private String analysisResult;
 
+    @ApiModelProperty(hidden = true)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
+    @ApiModelProperty(hidden = true)
     @UpdateTimestamp
     private LocalDateTime updateAt;
 
+    @ApiModelProperty(hidden = true)
     private Duration upTime = Duration.ZERO;;
 
+    @ApiModelProperty(hidden = true)
     private Duration idleTime = Duration.ZERO;
 
     @Enumerated(EnumType.STRING)
+    @ApiModelProperty("Status da OS")
     private STATUS status;
 
     @ManyToOne
+    @ApiModelProperty("Veículo ao qual a OS está vinculada")
     private Vehicle vehicle;
 
     @ManyToOne
+    @ApiModelProperty("Funcionário responsável pelo trabalho.")
     private Employee employee;
 
+    @ApiModel
     public enum STATUS {
 
         IN_ANALYSIS("EM_ANALISE"),

@@ -1,7 +1,7 @@
 package br.com.sg.mechanical.error;
 
 
-public class ValidationErrorDetails extends ErrorDetails {
+public class ValidationMessageDetails extends MessageDetails {
     private String field;
     private String fieldMessage;
 
@@ -55,8 +55,8 @@ public class ValidationErrorDetails extends ErrorDetails {
             return this;
         }
 
-        public ValidationErrorDetails build() {
-            ValidationErrorDetails validationDetails = new ValidationErrorDetails();
+        public ValidationMessageDetails build() {
+            ValidationMessageDetails validationDetails = new ValidationMessageDetails();
             validationDetails.setTitle(title);
             validationDetails.setStatus(status);
             validationDetails.setDetail(detail);

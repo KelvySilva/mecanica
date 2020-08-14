@@ -1,7 +1,7 @@
 package br.com.sg.mechanical.error;
 
 
-public class ErrorDetails {
+public class MessageDetails {
     private String title;
     private int status;
     private String detail;
@@ -61,7 +61,7 @@ public class ErrorDetails {
         private Builder() {
         }
 
-        public static Builder anErrorDetails() {
+        public static Builder aMessageDetails() {
             return new Builder();
         }
 
@@ -90,14 +90,14 @@ public class ErrorDetails {
             return this;
         }
 
-        public ErrorDetails build() {
-            ErrorDetails errorDetails = new ErrorDetails();
-            errorDetails.setTitle(title);
-            errorDetails.setStatus(status);
-            errorDetails.setDetail(detail);
-            errorDetails.setTimestamp(timestamp);
-            errorDetails.setDeveloperMessage(developerMessage);
-            return errorDetails;
+        public MessageDetails build() {
+            MessageDetails messageDetails = new MessageDetails();
+            messageDetails.setTitle(title);
+            messageDetails.setStatus(status);
+            messageDetails.setDetail(detail);
+            messageDetails.setTimestamp(timestamp);
+            messageDetails.setDeveloperMessage(developerMessage);
+            return messageDetails;
         }
     }
 }

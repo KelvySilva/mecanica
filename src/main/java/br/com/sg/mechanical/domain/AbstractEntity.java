@@ -1,5 +1,6 @@
 package br.com.sg.mechanical.domain;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import java.io.Serializable;
 @MappedSuperclass
 public class AbstractEntity implements Serializable {
 
+    @ApiModelProperty(value = "Identificador")
     @Id
     @GeneratedValue
     protected Long id;

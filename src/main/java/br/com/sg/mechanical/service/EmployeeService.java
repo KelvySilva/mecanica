@@ -5,8 +5,8 @@ import br.com.sg.mechanical.repository.EmployeeRepository;
 import br.com.sg.mechanical.utils.PasswordEncoder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,6 +33,7 @@ public class EmployeeService {
         return this.repository.save(employee);
     }
 
+    @Transactional
     public Employee updateOne(Long id, Employee employee) {
         Employee update = this.repository.findById(id).get();
         if (!update.getName().equals(employee.getName())) {
@@ -71,4 +72,8 @@ public class EmployeeService {
     }
 
 
+    @Transactional
+    public void deleteOne(Long id) {
+        this.repository.deleteById(id);
+    }
 }
