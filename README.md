@@ -11,7 +11,7 @@
 `docker-compose up -d` 
 isso criara um container no docker rodando um postgres pré-configurado para conexão com a aplicação.
 
-3. Baixe as dependências do projeto utilizando o MAVEN com o comenado:
+3. Baixe as dependências do projeto utilizando o MAVEN com o comando:
 `mvn clean install` ou use sua IDE pra que ela execute o procedimento.
 
 4. Agora use a ide para rodar a aplicação
