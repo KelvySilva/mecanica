@@ -18,5 +18,5 @@ public interface ServiceOrderRepository extends JpaRepository<ServiceOrder, Long
 
     List<ServiceOrder> findAllByCreatedAtBetween(LocalDateTime start, LocalDateTime end);
 
-    List<ServiceOrder> findAllByEmployeeNameContains(String prefix);
+    List<ServiceOrder> findAllByEmployeeNameContainsIgnoreCase(String prefix);
  }

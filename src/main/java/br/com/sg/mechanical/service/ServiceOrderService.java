@@ -91,7 +91,7 @@ public class ServiceOrderService {
     }
 
     public List<ServiceOrder> findByEmployeeName(String prefix) {
-        return this.repository.findAllByEmployeeNameContains(prefix);
+        return this.repository.findAllByEmployeeNameContainsIgnoreCase(prefix);
     }
     public Boolean exists(Long id) {
         return this.repository.existsById(id);
