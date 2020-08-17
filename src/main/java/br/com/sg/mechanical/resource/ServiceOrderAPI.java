@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,6 +46,69 @@ public class ServiceOrderAPI {
         if (serviceOrders.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
         else return ResponseEntity.ok(serviceOrders);
     }
+
+    @ApiOperation(value = "Lista todas as OS's entre o período informado.",notes = "Utilizar formato yyyy-MM-dd", response = ServiceOrder[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhuma OS cadastrada."),
+            @ApiResponse(code = 200,message = "Listagem de OS's")
+    })
+    @GetMapping(path = "/protected/os/period/{startDate}/{endDate}")
+    public ResponseEntity listAllByPeriod(@PathVariable String startDate, @PathVariable String endDate) {
+        LocalDate start = LocalDate.parse(startDate);
+        LocalDate end = LocalDate.parse(endDate);
+        List<ServiceOrder> serviceOrders = this.service.findAllByDateBetween(LocalDateTime.of(start, LocalTime.MIN), LocalDateTime.of(end, LocalTime.MIN));
+        if (serviceOrders.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(serviceOrders);
+    }
+
+    @ApiOperation(value = "Lista todas as OS's pelo cpf do cliente",notes = "Informe o cpf como cadastrado", response = ServiceOrder[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhuma OS cadastrada."),
+            @ApiResponse(code = 200,message = "Listagem de OS's")
+    })
+    @GetMapping(path = "/protected/os/client/{cpf}")
+    public ResponseEntity listAllByClientCpf(@PathVariable String cpf) {
+        List<ServiceOrder> serviceOrders = this.service.findByClientCpf(cpf);
+        if (serviceOrders.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(serviceOrders);
+    }
+
+    @ApiOperation(value = "Lista todas as OS's pela placa do veículo",notes = "Informe a placa como cadastrada", response = ServiceOrder[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhuma OS cadastrada."),
+            @ApiResponse(code = 200,message = "Listagem de OS's")
+    })
+    @GetMapping(path = "/protected/os/vehicle/{plate}")
+    public ResponseEntity listAllByVehiclePlate(@PathVariable String plate) {
+        List<ServiceOrder> serviceOrders = this.service.findByPlate(plate);
+        if (serviceOrders.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(serviceOrders);
+    }
+
+    @ApiOperation(value = "Lista todas as OS's pelo status informado",response = ServiceOrder[].class, responseContainer = "List",notes = "Valores possíveis: IN_ANALYSIS, ANALYSED, AWAITING_ANALYSIS, AWAITING_APPROVAL, APPROVED, IN_PROGRESS, FINISHED ,CANCELED",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhuma OS cadastrada."),
+            @ApiResponse(code = 200,message = "Listagem de OS's")
+    })
+    @GetMapping(path = "/protected/os/status/{status}")
+    public ResponseEntity listAllByStatus(@PathVariable ServiceOrder.STATUS status) {
+        List<ServiceOrder> serviceOrders = this.service.findByStatus(status);
+        if (serviceOrders.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(serviceOrders);
+    }
+
+    @ApiOperation(value = "Lista todas as OS's pelo nome do funcuinário informado",response = ServiceOrder[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhuma OS cadastrada."),
+            @ApiResponse(code = 200,message = "Listagem de OS's")
+    })
+    @GetMapping(path = "/protected/os/employee")
+    public ResponseEntity listAllByElployeeName(@RequestParam String name) {
+        List<ServiceOrder> serviceOrders = this.service.findByEmployeeName(name);
+        if (serviceOrders.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(serviceOrders);
+    }
+
 
     @ApiOperation(value = "Encontra uma OS pelo seu ID.", response = ServiceOrder.class,consumes = "application/json",produces = "application/json")
     @ApiResponses(value = {

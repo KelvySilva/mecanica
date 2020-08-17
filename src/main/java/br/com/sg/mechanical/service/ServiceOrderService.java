@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,6 +74,25 @@ public class ServiceOrderService {
         return this.repository.saveAndFlush(updatable);
     }
 
+    public List<ServiceOrder> findAllByDateBetween(LocalDateTime start, LocalDateTime end) {
+        return this.repository.findAllByCreatedAtBetween(start,end);
+    }
+
+    public List<ServiceOrder> findByClientCpf(String cpf) {
+        return this.repository.findAllByVehicle_ClientCpfEquals(cpf);
+    }
+
+    public List<ServiceOrder> findByPlate(String plate) {
+        return this.repository.findAllByVehicleLicensePlateEquals(plate);
+    }
+
+    public List<ServiceOrder> findByStatus(ServiceOrder.STATUS status) {
+        return this.repository.findAllByStatusEquals(status);
+    }
+
+    public List<ServiceOrder> findByEmployeeName(String prefix) {
+        return this.repository.findAllByEmployeeNameContains(prefix);
+    }
     public Boolean exists(Long id) {
         return this.repository.existsById(id);
     }

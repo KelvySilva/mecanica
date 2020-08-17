@@ -72,4 +72,26 @@ public class QuoteService {
         return quote;
     }
 
+    public List<Quote> findAllByClientId(Long id) {
+        return  this.repository.findAllByServiceOrder_Vehicle_ClientId(id);
+    }
+    public List<Quote> findAllByClientNameStartsWith(String prefix) {
+        return  this.repository.findAllByServiceOrder_Vehicle_ClientNameStartsWith(prefix);
+    }
+
+    public List<Quote> findAllByClientNameContains(String prefix) {
+        return  this.repository.findAllByServiceOrder_Vehicle_ClientNameContains(prefix);
+    }
+    public List<Quote> findAllByVehicleLicensePlate(String prefix) {
+        return  this.repository.findAllByServiceOrder_VehicleLicensePlateEquals(prefix);
+    }
+
+    public List<Quote> findAllByVehicleLicensePlateStartsWith(String prefix) {
+        return  this.repository.findAllByServiceOrder_VehicleLicensePlateStartsWith(prefix);
+    }
+    public List<Quote> findAllByClientCpf(String prefix) {
+        return  this.repository.findAllByServiceOrder_Vehicle_ClientCpfEquals(prefix);
+    }
+
+
 }

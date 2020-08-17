@@ -40,6 +40,78 @@ public class QuoteAPI {
         else return ResponseEntity.ok(quotes);
     }
 
+    @ApiOperation(value = "Lista todos os orçamentos pelo id do cliente.", response = Quote[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhum orçamento cadastrado."),
+            @ApiResponse(code = 200,message = "Listagem de orçamentos")
+    })
+    @GetMapping(path = "/protected/quotes/client/{id}")
+    public ResponseEntity listAllByClientId(@ApiParam(value = "Id do cliente", required = true, example = "3") @PathVariable Long id) {
+        List<Quote> quotes = this.service.findAllByClientId(id);
+        if (quotes.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(quotes);
+    }
+
+    @ApiOperation(value = "Lista todos os orçamentos pelo cpf do cliente (pode usar ponto).", response = Quote[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhum orçamento cadastrado."),
+            @ApiResponse(code = 200,message = "Listagem de orçamentos")
+    })
+    @GetMapping(path = "/protected/quotes/client/cpf/{cpf}")
+    public ResponseEntity listAllByClientCpf(@PathVariable("cpf") String cpf) {
+        List<Quote> quotes = this.service.findAllByClientCpf(cpf);
+        if (quotes.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(quotes);
+    }
+
+    @ApiOperation(value = "Lista todos os orçamentos que o nome do cliente comece com as letras ou conjunto de letras informados.", response = Quote[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhum orçamento cadastrado."),
+            @ApiResponse(code = 200,message = "Listagem de orçamentos")
+    })
+    @GetMapping(path = "/protected/quotes/client")
+    public ResponseEntity listAllByClientNameStartsWith(@RequestParam String name) {
+        List<Quote> quotes = this.service.findAllByClientNameStartsWith(name);
+        if (quotes.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(quotes);
+    }
+
+    @ApiOperation(value = "Lista todos os orçamentos que o nome do cliente contenha os o conjunto informado.", response = Quote[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhum orçamento cadastrado."),
+            @ApiResponse(code = 200,message = "Listagem de orçamentos")
+    })
+    @GetMapping(path = "/protected/quotes/client/name/{name}")
+    public ResponseEntity listAllByClientNameEquals(@PathVariable String name) {
+        List<Quote> quotes = this.service.findAllByClientNameContains(name);
+        if (quotes.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(quotes);
+    }
+
+    @ApiOperation(value = "Lista todos os orçamentos que o veiculo possua a placa igual a informada.", response = Quote[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhum orçamento cadastrado."),
+            @ApiResponse(code = 200,message = "Listagem de orçamentos")
+    })
+    @GetMapping(path = "/protected/quotes/vehicle/plate/{plate}")
+    public ResponseEntity listAllByVehicle(@PathVariable String plate) {
+        List<Quote> quotes = this.service.findAllByVehicleLicensePlate(plate);
+        if (quotes.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(quotes);
+    }
+
+    @ApiOperation(value = "Lista todos os orçamentos que o veiculo possua a placa igual a informada.", response = Quote[].class, responseContainer = "List",consumes = "application/json",produces = "application/json")
+    @ApiResponses(value = {
+            @ApiResponse(code = 404, message = "Nenhum orçamento cadastrado."),
+            @ApiResponse(code = 200,message = "Listagem de orçamentos")
+    })
+    @GetMapping(path = "/protected/quotes/vehicle")
+    public ResponseEntity listAllByVehiclePlateStartsWith(@RequestParam String plate) {
+        List<Quote> quotes = this.service.findAllByVehicleLicensePlateStartsWith(plate);
+        if (quotes.isEmpty()) return ResponseEntity.ok(MessageUtils.createResourceListIsEmptyMessage());
+        else return ResponseEntity.ok(quotes);
+    }
+
     @ApiOperation(value = "Encontra um orçamento pelo seu ID.", response = Quote.class,consumes = "application/json",produces = "application/json")
     @ApiResponses(value = {
             @ApiResponse(code = 404, message = "Quando não for possível encontrar o orçamento informado"),

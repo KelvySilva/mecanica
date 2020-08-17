@@ -21,6 +21,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @ApiModel(value = "Objeto Ordem de Serviço")
 @NoArgsConstructor
